@@ -13,10 +13,7 @@ exports.init = function () {
         return typeof this[field] === typeof type();
     };
     Object.prototype.checkHasLength = function (count) {
-        if (this.length === count) {
-            return true;
-        }
-        return false;
+        return this.length === count;
     };
     Object.prototype.checkContainsValues = function (values) {
         return values.every(item => {
@@ -27,9 +24,6 @@ exports.init = function () {
         return this.length === count;
     };
     String.prototype.checkHasWordsCount = function (count) {
-        if (typeof this !== 'string') {
-            return false;
-        }
         return count === this.split(' ').filter(item => {
             return item.length !== 0;
         }).length;
