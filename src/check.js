@@ -24,24 +24,21 @@ module.exports.wrap = function (value) {
 };
 
 exports.init = function () {
-    /*Некоторые методы повторяются из Object в других обьектах,
-    хотя они и так будут присвоены. Как лучше сделать, оставить их
-    только в Object или как есть?*/
     var objectFns = {
         hasKeys: function (fields) {
-            return checkHasKeys.bind(this)(fields);
+            return checkHasKeys.call(this, fields);
         },
-        checkContainsKeys: function (keys) {
-            return checkHasKeys.bind(this)(keys);
+        containsKeys: function (keys) {
+            return checkHasKeys.call(this, keys);
         },
         hasValueType: function (field, type) {
-            return checkHasValueType.bind(this)(field, type);
+            return checkHasValueType.call(this, field, type);
         },
         containsValues: function (values) {
-            return checkContainsValues.bind(this)(values);
+            return checkContainsValues.call(this, values);
         },
         hasValues: function (values) {
-            return checkHasValues.bind(this)(values);
+            return checkHasValues.call(this, values);
         },
         isNull: function () {
             return isNull.bind(this)();
@@ -49,35 +46,36 @@ exports.init = function () {
     };
     var functionFns = {
         hasParamsCount: function (count) {
-            return checkHasParamsCount.bind(this)(count);
+            return checkHasParamsCount.call(this, count);
         }
     };
     var arrayFns = {
         hasKeys: function (fields) {
-            return checkHasKeys.bind(this)(fields);
-        },
-        hasValueType: function (field, type) {
-            return checkHasValueType.bind(this)(field, type);
-        },
-        checkContainsKeys: function (keys) {
-            return checkHasKeys.bind(this)(keys);
-        },
-        containsValues: function (values) {
-            return checkContainsValues.bind(this)(values);
+            return checkHasKeys.call(this, fields);
         },
         hasLength: function (count) {
-            return checkHasLength.bind(this)(count);
+            return checkHasLength.call(this, count);
         },
         hasValues: function (values) {
-            return checkHasValues.bind(this)(values);
+            return checkHasValues.call(this, values);
+        },
+        hasValueType: function (field, type) {
+            return checkHasValueType.call(this, field, type);
+        },
+        containsKeys: function (keys) {
+            return checkHasKeys.call(this, keys);
+        },
+        containsValues: function (values) {
+            return checkContainsValues.call(this, values);
         }
+
     };
     var stringFns = {
         hasLength: function (count) {
-            return checkHasLength.bind(this)(count);
+            return checkHasLength.call(this, count);
         },
         hasWordsCount: function (count) {
-            return checkHasWordsCount.bind(this)(count);
+            return checkHasWordsCount.call(this, count);
         }
     };
 
@@ -113,12 +111,12 @@ exports.init = function () {
     };
     function checkContainsKeys(keys) {
         return keys.every(item => {
-            this.hasOwnProperty(item);
+            return this.hasOwnProperty(item);
         });
     };
     function checkHasKeys(fields) {
-        return !fields.some(item => {
-            return !this.hasOwnProperty(item);
+        return fields.every(item => {
+            return this.hasOwnProperty(item);
         });
     };
     function checkHasValueType(field, type) {
@@ -131,18 +129,23 @@ exports.init = function () {
         return this.length === count;
     };
     function checkContainsValues(values) {
+        if (typeof this === 'array') {
+            return values.every(item => {
+                return this.indexOf(item) !== -1;
+            });
+        }
         return values.every(item => {
             return this.hasOwnProperty(item);
         });
     };
     function checkHasValues(values) {
         if (typeof this === 'array') {
-            return this.some(item => {
+            return !this.some(item => {
                 return values.indexOf(item) !== -1;
             });
         }
-        for (var key in this) {
-            if (values.indexOf(key) === -1) {
+        for (var value of values) {
+            if (!this.hasOwnProperty(value)) {
                 return false;
             }
         }
