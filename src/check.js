@@ -140,7 +140,7 @@ exports.init = function () {
     };
     function checkHasValues(values) {
         if (typeof this === 'array') {
-            return !this.some(item => {
+            return this.some(item => {
                 return values.indexOf(item) !== -1;
             });
         }
@@ -173,6 +173,7 @@ exports.init = function () {
 
     connectToObjectProto(Object.prototype, 'checkHasKeys', checkHasKeys);
     connectToObjectProto(Object.prototype, 'checkHasValueType', checkHasValueType);
+    connectToObjectProto(Object.prototype, 'checkHasValues', checkHasValues);
     connectToObjectProto(Object.prototype, 'checkHasLength', checkHasLength);
     connectToObjectProto(Object.prototype, 'checkContainsValues', checkContainsValues);
     connectToObjectProto(Function.prototype, 'checkHasParamsCount', checkHasParamsCount);

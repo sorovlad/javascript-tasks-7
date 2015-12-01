@@ -11,32 +11,68 @@ describe('Check', function () {
     var func = function (a, b) {};
     var str = 'some string';
 
-    it('should check that target hasKeys', function () {
-        assert.ok(person.checkHasKeys(['name', 'age']));
-    });
+    if ({}.check) {
+        describe('Extra credit', function () {
+            it('should check that target hasKeys', function () {
+                assert.ok(person.check.hasKeys(['name', 'age']));
+                assert.equal(person.check.hasKeys(['name', 'age', 'gender']), false);
+                assert.equal(person.checkHasKeys(['John', 20]), false); 
+            });
+            it('should check that target hasValueType', function () {
+                assert.ok(person.check.hasValueType('name', String));
+                assert.equal(person.check.hasValueType(['name', Array]), false);
+            });
 
-    it('should check that target hasValueType', function () {
-        assert.ok(person.checkHasValueType('name', String));
-    });
+            it('should check that target hasKeys', function () {
+                assert.ok(numbers.check.hasKeys(['0', '1', '2']));
+                assert.equal(numbers.check.hasKeys(['0', '1', '2', '3']), false);
+            });
 
-    it('should check that target hasKeys', function () {
-        assert.ok(numbers.checkHasKeys(['0', '1', '2']));
-    });
+            it('should check that target hasLength', function () {
+                assert.ok(numbers.check.hasLength(3));
+            });
 
-    it('should check that target hasLength', function () {
-        assert.ok(numbers.checkHasLength(3));
-    });
+            it('should check that target containsValues', function () {
+                assert.ok(numbers.check.containsValues([2, 1]));
+            });
 
-    it('should check that target containsValues', function () {
-        assert.ok(numbers.checkContainsValues([2, 1]));
-    });
+            it('should check that target hasParamsCount', function () {
+                assert.ok(func.check.hasParamsCount(2));
+            });
 
-    it('should check that target hasParamsCount', function () {
-        assert.ok(func.checkHasParamsCount(2));
-    });
+            it('should check that target hasWordsCount', function () {
+                assert.ok(str.check.hasWordsCount(2));
+            });
+        });
+    } else {
+        describe('Required tasks', function () {
+            it('should check that target hasKeys', function () {
+                assert.ok(person.checkHasKeys(['name', 'age']));
+            });
 
-    it('should check that target hasWordsCount', function () {
-        assert.ok(str.checkHasWordsCount(2));
-    });
+            it('should check that target hasValueType', function () {
+                assert.ok(person.checkHasValueType('name', String));
+            });
 
+            it('should check that target hasKeys', function () {
+                assert.ok(numbers.checkHasKeys(['0', '1', '2']));
+            });
+
+            it('should check that target hasLength', function () {
+                assert.ok(numbers.checkHasLength(3));
+            });
+
+            it('should check that target containsValues', function () {
+                assert.ok(numbers.checkContainsValues([2, 1]));
+            });
+
+            it('should check that target hasParamsCount', function () {
+                assert.ok(func.checkHasParamsCount(2));
+            });
+
+            it('should check that target hasWordsCount', function () {
+                assert.ok(str.checkHasWordsCount(2));
+            });
+        });
+    }
 });
