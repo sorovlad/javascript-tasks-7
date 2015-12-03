@@ -202,10 +202,12 @@ exports.init = function () {
         });
     };
 
+    connectToObjectProto(Object.prototype, 'checkContainsKeys', checkContainsKeys);
     connectToObjectProto(Object.prototype, 'checkHasKeys', checkHasKeys);
     connectToObjectProto(Object.prototype, 'checkHasValueType', checkHasValueType);
     connectToObjectProto(Object.prototype, 'checkHasValues', checkHasValues);
-    connectToObjectProto(Object.prototype, 'checkHasLength', checkHasLength);
+    connectToObjectProto(Array.prototype, 'checkHasLength', checkHasLength);
+    connectToObjectProto(String.prototype, 'checkHasLength', checkHasLength);
     connectToObjectProto(Object.prototype, 'checkContainsValues', checkContainsValues);
     connectToObjectProto(Function.prototype, 'checkHasParamsCount', checkHasParamsCount);
     connectToObjectProto(String.prototype, 'checkHasWordsCount', checkHasWordsCount);
