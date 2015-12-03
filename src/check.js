@@ -29,7 +29,7 @@ exports.init = function () {
             return checkHasKeys.call(this, fields);
         },
         containsKeys: function (keys) {
-            return checkHasKeys.call(this, keys);
+            return checkContainsKeys.call(this, keys);
         },
         hasValueType: function (field, type) {
             return checkHasValueType.call(this, field, type);
@@ -63,7 +63,7 @@ exports.init = function () {
             return checkHasValueType.call(this, field, type);
         },
         containsKeys: function (keys) {
-            return checkHasKeys.call(this, keys);
+            return checkContainsKeys.call(this, keys);
         },
         containsValues: function (values) {
             return checkContainsValues.call(this, values);
@@ -110,14 +110,34 @@ exports.init = function () {
         };
     };
     function checkContainsKeys(keys) {
+        if (typeof this === 'array') {
+            return keys.every(item => {
+                return this.indexOf(item) !== -1;
+            });
+        }
         return keys.every(item => {
             return this.hasOwnProperty(item);
         });
     };
     function checkHasKeys(fields) {
-        return fields.every(item => {
-            return this.hasOwnProperty(item);
-        });
+        if (typeof this === 'array') {
+            if (fields.length !== this.length) {
+                return false;
+            }
+            return this.every(item => {
+                return values.indexOf(item) !== -1;
+            });
+        }
+        var keys = Object.keys(this);
+        if (keys.length !== fields.length) {
+            return false;
+        }
+        for (var key of Object.keys(this)) {
+            if (fields.indexOf(key) === -1) {
+                return false;
+            }
+        }
+        return true;
     };
     function checkHasValueType(field, type) {
         if (!this.hasOwnProperty(field) || typeof this === 'function') {
@@ -134,9 +154,16 @@ exports.init = function () {
                 return this.indexOf(item) !== -1;
             });
         }
-        return values.every(item => {
-            return this.hasOwnProperty(item);
-        });
+        var keys = Object.keys(this);
+        for (var value of values) {
+            var inValues = keys.some(key => {
+                return this[key] === value;
+            });
+            if (!inValues) {
+                return false;
+            }
+        }
+        return true;
     };
     function checkHasValues(values) {
         if (typeof this === 'array') {
@@ -144,8 +171,12 @@ exports.init = function () {
                 return values.indexOf(item) !== -1;
             });
         }
-        for (var value of values) {
-            if (!this.hasOwnProperty(value)) {
+        var keys = Object.keys(this);
+        if (keys.length !== values.length) {
+            return false;
+        }
+        for (var key of keys) {
+            if (values.indexOf(this[key]) === -1) {
                 return false;
             }
         }
@@ -178,5 +209,6 @@ exports.init = function () {
     connectToObjectProto(Object.prototype, 'checkContainsValues', checkContainsValues);
     connectToObjectProto(Function.prototype, 'checkHasParamsCount', checkHasParamsCount);
     connectToObjectProto(String.prototype, 'checkHasWordsCount', checkHasWordsCount);
+    connectToObjectProto(Function.prototype, 'checkContainsKeys', checkContainsKeys);
     connectToObjectProto(Object.prototype, 'isNull', isNull);
 };
